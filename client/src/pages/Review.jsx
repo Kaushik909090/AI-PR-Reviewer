@@ -1953,146 +1953,159 @@ function Review() {
 const styles = {
     container: {
         minHeight: "100vh",
-        padding: "40px",
-        backgroundColor: "#020617",
-        color: "#ffffff",
+        padding: "32px clamp(18px, 4vw, 56px) 64px",
+        background: "radial-gradient(circle at top, #0f1d3a 0%, #020617 34%, #020617 100%)",
+        color: "#f8fafc",
         boxSizing: "border-box",
-        fontFamily: "Inter, Arial, sans-serif",
+        fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
     },
 
     backButton: {
-        padding: "10px 16px",
+        padding: "10px 15px",
         marginBottom: "24px",
-        borderRadius: "8px",
-        border: "1px solid #334155",
-        backgroundColor: "#1e293b",
-        color: "#ffffff",
+        borderRadius: "10px",
+        border: "1px solid #243247",
+        background: "rgba(15, 23, 42, 0.82)",
+        color: "#cbd5e1",
         cursor: "pointer",
-        fontSize: "14px",
+        fontSize: "13px",
+        fontWeight: "700",
+        boxShadow: "0 8px 30px rgba(0,0,0,.18)",
     },
 
     header: {
         display: "flex",
         justifyContent: "space-between",
-        alignItems: "center",
-        gap: "30px",
-        marginBottom: "22px",
+        alignItems: "flex-start",
+        gap: "28px",
+        maxWidth: "1320px",
+        margin: "0 auto 22px",
         flexWrap: "wrap",
     },
 
     badge: {
-        display: "inline-block",
-        padding: "6px 10px",
-        borderRadius: "6px",
-        backgroundColor: "#172554",
+        display: "inline-flex",
+        alignItems: "center",
+        padding: "7px 11px",
+        borderRadius: "999px",
+        background: "rgba(59,130,246,.12)",
+        border: "1px solid rgba(96,165,250,.2)",
         color: "#93c5fd",
-        fontSize: "12px",
-        fontWeight: "bold",
-        letterSpacing: "0.5px",
+        fontSize: "11px",
+        fontWeight: "800",
+        letterSpacing: "1px",
         marginBottom: "12px",
     },
 
     title: {
-        margin: "0 0 8px 0",
-        fontSize: "34px",
+        margin: "0 0 7px",
+        fontSize: "clamp(28px, 4vw, 40px)",
+        lineHeight: "1.1",
+        letterSpacing: "-0.03em",
     },
 
     subtitle: {
         margin: 0,
         color: "#94a3b8",
-        fontSize: "17px",
+        fontSize: "15px",
     },
 
     riskCard: {
         minWidth: "190px",
-        padding: "22px",
+        padding: "20px 24px",
         border: "1px solid",
-        borderRadius: "14px",
+        borderRadius: "16px",
         textAlign: "center",
+        boxShadow: "0 14px 45px rgba(0,0,0,.24)",
+        backdropFilter: "blur(10px)",
     },
 
     riskLabel: {
-        fontSize: "11px",
+        fontSize: "10px",
         color: "#94a3b8",
-        fontWeight: "bold",
-        letterSpacing: "1px",
-        marginBottom: "8px",
+        fontWeight: "800",
+        letterSpacing: "1.2px",
+        marginBottom: "7px",
     },
 
     riskValue: {
-        fontSize: "22px",
-        fontWeight: "bold",
+        fontSize: "21px",
+        fontWeight: "900",
     },
 
     toolbar: {
         display: "flex",
-        gap: "10px",
+        gap: "9px",
         flexWrap: "wrap",
-        marginBottom: "20px",
+        maxWidth: "1320px",
+        margin: "0 auto 20px",
     },
 
     reReviewStatus: {
-        padding: "12px 16px",
-        marginBottom: "20px",
-        borderRadius: "10px",
+        maxWidth: "1320px",
+        margin: "0 auto 20px",
+        padding: "13px 16px",
+        borderRadius: "12px",
         border: "1px solid #334155",
         fontSize: "13px",
         lineHeight: "1.5",
+        boxShadow: "0 8px 30px rgba(0,0,0,.14)",
     },
 
     reReviewStatusSuccess: {
-        backgroundColor: "#052e16",
-        borderColor: "#22c55e",
+        background: "rgba(5,46,22,.75)",
+        borderColor: "rgba(34,197,94,.45)",
         color: "#86efac",
     },
 
     reReviewStatusError: {
-        backgroundColor: "#450a0a",
-        borderColor: "#ef4444",
+        background: "rgba(69,10,10,.78)",
+        borderColor: "rgba(239,68,68,.5)",
         color: "#fca5a5",
     },
 
     githubPostButton: {
-        borderColor: "#22c55e",
+        borderColor: "rgba(34,197,94,.5)",
         color: "#86efac",
-        backgroundColor: "#052e16",
+        background: "rgba(5,46,22,.72)",
     },
 
     postedCommentLinkRow: {
-        marginTop: "8px",
+        marginTop: "9px",
     },
 
     toolbarButtonDisabled: {
-        opacity: 0.6,
+        opacity: 0.55,
         cursor: "not-allowed",
     },
 
     toolbarButton: {
-        padding: "9px 13px",
-        borderRadius: "8px",
-        border: "1px solid #334155",
-        backgroundColor: "#0f172a",
+        padding: "10px 14px",
+        borderRadius: "10px",
+        border: "1px solid #263449",
+        background: "rgba(11,17,32,.88)",
         color: "#cbd5e1",
         cursor: "pointer",
         fontSize: "12px",
-        fontWeight: "bold",
+        fontWeight: "800",
+        transition: "all .18s ease",
+        boxShadow: "0 5px 20px rgba(0,0,0,.12)",
     },
 
     commitCard: {
         display: "grid",
-        gridTemplateColumns:
-            "repeat(auto-fit, minmax(180px, 1fr))",
-        gap: "20px",
-        padding: "20px",
-        marginBottom: "35px",
-        border: "1px solid #334155",
-        borderRadius: "12px",
-        backgroundColor: "#0f172a",
+        gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+        gap: "14px",
+        maxWidth: "1320px",
+        margin: "0 auto 38px",
+        padding: "18px",
+        border: "1px solid #223047",
+        borderRadius: "16px",
+        background: "rgba(11,17,32,.78)",
+        boxShadow: "0 16px 45px rgba(0,0,0,.2)",
     },
 
-    commitValue: {
-        overflow: "hidden",
-    },
+    commitValue: { overflow: "hidden" },
 
     shaRow: {
         display: "flex",
@@ -2103,26 +2116,29 @@ const styles = {
 
     copyButton: {
         flexShrink: 0,
-        padding: "5px 8px",
-        borderRadius: "6px",
+        padding: "6px 9px",
+        borderRadius: "8px",
         border: "1px solid #334155",
-        backgroundColor: "#1e293b",
+        background: "#172033",
         color: "#93c5fd",
         cursor: "pointer",
         fontSize: "11px",
+        fontWeight: "700",
     },
 
     smallLabel: {
         display: "block",
         color: "#64748b",
-        fontSize: "11px",
+        fontSize: "10px",
         textTransform: "uppercase",
-        letterSpacing: "0.7px",
+        letterSpacing: "1px",
         marginBottom: "6px",
+        fontWeight: "800",
     },
 
     section: {
-        marginBottom: "38px",
+        maxWidth: "1320px",
+        margin: "0 auto 38px",
     },
 
     sectionTitleRow: {
@@ -2131,59 +2147,50 @@ const styles = {
         alignItems: "center",
         gap: "15px",
         flexWrap: "wrap",
-        marginBottom: "18px",
+        marginBottom: "16px",
     },
 
     sectionTitle: {
-        fontSize: "22px",
+        fontSize: "21px",
         margin: 0,
+        letterSpacing: "-0.02em",
     },
 
     countBadge: {
-        marginLeft: "10px",
+        marginLeft: "9px",
         padding: "4px 9px",
-        borderRadius: "20px",
-        backgroundColor: "#1e293b",
+        borderRadius: "999px",
+        background: "#172033",
         color: "#94a3b8",
-        fontSize: "13px",
+        fontSize: "12px",
+        border: "1px solid #263449",
     },
 
     statsGrid: {
         display: "grid",
-        gridTemplateColumns:
-            "repeat(auto-fit, minmax(140px, 1fr))",
-        gap: "14px",
+        gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+        gap: "12px",
     },
 
     statCard: {
-        padding: "20px",
-        border: "1px solid #334155",
-        borderRadius: "12px",
-        backgroundColor: "#0f172a",
+        padding: "18px",
+        border: "1px solid #223047",
+        borderRadius: "14px",
+        background: "linear-gradient(145deg, rgba(15,23,42,.95), rgba(7,12,25,.9))",
         textAlign: "center",
+        boxShadow: "0 10px 30px rgba(0,0,0,.16)",
     },
 
-    statEmoji: {
-        fontSize: "22px",
-        marginBottom: "8px",
-    },
-
-    statValue: {
-        fontSize: "28px",
-        fontWeight: "bold",
-        marginBottom: "4px",
-    },
-
-    statLabel: {
-        color: "#94a3b8",
-        fontSize: "13px",
-    },
+    statEmoji: { fontSize: "20px", marginBottom: "7px" },
+    statValue: { fontSize: "27px", fontWeight: "900", marginBottom: "3px" },
+    statLabel: { color: "#94a3b8", fontSize: "12px", fontWeight: "600" },
 
     summaryCard: {
-        padding: "24px",
-        border: "1px solid #334155",
-        borderRadius: "14px",
-        backgroundColor: "#0f172a",
+        padding: "25px",
+        border: "1px solid #263449",
+        borderRadius: "18px",
+        background: "linear-gradient(145deg, rgba(15,23,42,.96), rgba(7,12,25,.9))",
+        boxShadow: "0 18px 55px rgba(0,0,0,.22)",
     },
 
     summaryHeader: {
@@ -2196,93 +2203,60 @@ const styles = {
 
     summaryEyebrow: {
         color: "#60a5fa",
-        fontSize: "11px",
-        fontWeight: "bold",
-        letterSpacing: "1px",
+        fontSize: "10px",
+        fontWeight: "900",
+        letterSpacing: "1.2px",
     },
 
-    summaryTitle: {
-        margin: "7px 0 8px 0",
-        fontSize: "24px",
-    },
-
-    summaryText: {
-        margin: 0,
-        maxWidth: "850px",
-        color: "#94a3b8",
-        lineHeight: "1.6",
-    },
+    summaryTitle: { margin: "7px 0 8px", fontSize: "24px", letterSpacing: "-0.02em" },
+    summaryText: { margin: 0, maxWidth: "900px", color: "#94a3b8", lineHeight: "1.7" },
 
     summaryRisk: {
-        padding: "10px 14px",
+        padding: "9px 13px",
         border: "1px solid",
-        borderRadius: "8px",
-        fontWeight: "bold",
-        fontSize: "12px",
+        borderRadius: "999px",
+        fontWeight: "900",
+        fontSize: "11px",
         whiteSpace: "nowrap",
     },
 
     summaryStats: {
         display: "grid",
-        gridTemplateColumns:
-            "repeat(3, 1fr)",
-        gap: "12px",
+        gridTemplateColumns: "repeat(3, 1fr)",
+        gap: "10px",
         marginTop: "22px",
     },
 
     summaryStat: {
         padding: "14px",
-        borderRadius: "9px",
-        backgroundColor: "#020617",
+        borderRadius: "11px",
+        background: "rgba(2,6,23,.72)",
         border: "1px solid #1e293b",
     },
 
-    summaryStatValue: {
-        fontSize: "22px",
-        fontWeight: "bold",
-        color: "#ffffff",
-    },
-
-    summaryStatLabel: {
-        marginTop: "4px",
-        color: "#64748b",
-        fontSize: "12px",
-    },
-
-    summaryStatDetail: {
-        marginTop: "3px",
-        color: "#475569",
-        fontSize: "11px",
-    },
+    summaryStatValue: { fontSize: "22px", fontWeight: "900", color: "#ffffff" },
+    summaryStatLabel: { marginTop: "4px", color: "#64748b", fontSize: "11px", fontWeight: "700" },
+    summaryStatDetail: { marginTop: "3px", color: "#475569", fontSize: "10px" },
 
     contentCard: {
-        padding: "24px",
-        border: "1px solid #334155",
-        borderRadius: "12px",
-        backgroundColor: "#0f172a",
+        padding: "22px",
+        border: "1px solid #263449",
+        borderRadius: "15px",
+        background: "rgba(11,17,32,.82)",
+        boxShadow: "0 12px 35px rgba(0,0,0,.14)",
     },
 
-    paragraph: {
-        margin: 0,
-        color: "#cbd5e1",
-        lineHeight: "1.7",
-        whiteSpace: "pre-wrap",
-    },
-
-    muted: {
-        margin: 0,
-        color: "#64748b",
-        lineHeight: "1.5",
-    },
+    paragraph: { margin: 0, color: "#cbd5e1", lineHeight: "1.75", whiteSpace: "pre-wrap" },
+    muted: { margin: 0, color: "#64748b", lineHeight: "1.55" },
 
     successCard: {
         display: "flex",
         alignItems: "center",
         gap: "18px",
-        padding: "24px",
-        border: "1px solid #166534",
-        borderRadius: "12px",
-        backgroundColor: "#052e16",
+        padding: "22px",
+        border: "1px solid rgba(34,197,94,.35)",
+        borderRadius: "15px",
+        background: "linear-gradient(145deg, rgba(5,46,22,.82), rgba(3,30,17,.65))",
     },
 
     successIcon: {
@@ -2291,206 +2265,173 @@ const styles = {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: "50%",
-        backgroundColor: "#166534",
+        borderRadius: "14px",
+        background: "rgba(22,101,52,.75)",
         color: "#86efac",
-        fontSize: "24px",
-        fontWeight: "bold",
+        fontSize: "23px",
+        fontWeight: "900",
+        flexShrink: 0,
     },
 
-    successTitle: {
-        margin: "0 0 5px 0",
-        color: "#86efac",
-    },
+    successTitle: { margin: "0 0 5px", color: "#86efac" },
+    successText: { margin: 0, color: "#bbf7d0" },
 
-    successText: {
-        margin: 0,
-        color: "#bbf7d0",
-    },
-
-    issueControls: {
-        display: "flex",
-        gap: "8px",
-        flexWrap: "wrap",
-    },
+    issueControls: { display: "flex", gap: "8px", flexWrap: "wrap" },
 
     searchInput: {
-        minWidth: "190px",
-        padding: "9px 11px",
-        borderRadius: "8px",
-        border: "1px solid #334155",
-        backgroundColor: "#0f172a",
+        minWidth: "210px",
+        padding: "10px 12px",
+        borderRadius: "10px",
+        border: "1px solid #263449",
+        background: "#080f1f",
         color: "#ffffff",
         outline: "none",
     },
 
     filterSelect: {
-        padding: "9px 11px",
-        borderRadius: "8px",
-        border: "1px solid #334155",
-        backgroundColor: "#0f172a",
+        padding: "10px 12px",
+        borderRadius: "10px",
+        border: "1px solid #263449",
+        background: "#080f1f",
         color: "#cbd5e1",
         outline: "none",
     },
 
     issueCard: {
         position: "relative",
-        marginBottom: "18px",
+        marginBottom: "16px",
         padding: "22px",
         border: "1px solid",
-        borderRadius: "12px",
-        backgroundColor: "#0f172a",
+        borderRadius: "15px",
+        background: "linear-gradient(145deg, rgba(11,17,32,.96), rgba(6,11,23,.92))",
+        boxShadow: "0 12px 35px rgba(0,0,0,.16)",
     },
 
     issueHeader: {
         display: "flex",
         alignItems: "center",
-        gap: "10px",
+        gap: "9px",
         flexWrap: "wrap",
-        marginBottom: "18px",
+        marginBottom: "15px",
     },
 
     severityBadge: {
         padding: "6px 10px",
         border: "1px solid",
-        borderRadius: "7px",
-        fontSize: "12px",
-        fontWeight: "bold",
+        borderRadius: "999px",
+        fontSize: "10px",
+        fontWeight: "900",
+        letterSpacing: ".5px",
     },
 
-    issueFile: {
-        color: "#cbd5e1",
-        fontSize: "14px",
-    },
+    issueFile: { color: "#cbd5e1", fontSize: "13px", fontWeight: "650" },
 
     lineBadge: {
         padding: "4px 8px",
-        borderRadius: "5px",
-        backgroundColor: "#1e293b",
+        borderRadius: "999px",
+        background: "#172033",
         color: "#94a3b8",
-        fontSize: "12px",
+        fontSize: "11px",
+        border: "1px solid #263449",
     },
 
     expandButton: {
         marginLeft: "auto",
-        padding: "5px 8px",
-        borderRadius: "6px",
+        padding: "6px 10px",
+        borderRadius: "8px",
         border: "1px solid #334155",
-        backgroundColor: "#1e293b",
+        background: "#172033",
         color: "#cbd5e1",
         cursor: "pointer",
-        fontSize: "11px",
+        fontSize: "10px",
+        fontWeight: "800",
     },
 
-    issueTitle: {
-        margin: "0 0 20px 0",
-        fontSize: "19px",
-    },
+    issueTitle: { margin: "0 0 18px", fontSize: "18px", lineHeight: "1.45" },
 
     issueBlock: {
         padding: "16px",
-        marginBottom: "12px",
-        borderRadius: "8px",
-        backgroundColor: "#020617",
+        marginBottom: "11px",
+        borderRadius: "11px",
+        background: "rgba(2,6,23,.8)",
+        border: "1px solid #172033",
     },
 
     fixBlock: {
         padding: "16px",
-        borderRadius: "8px",
-        backgroundColor: "#172554",
+        borderRadius: "11px",
+        background: "rgba(23,37,84,.65)",
+        border: "1px solid rgba(59,130,246,.18)",
     },
 
-    blockTitle: {
-        margin: "0 0 8px 0",
-        fontSize: "14px",
-    },
+    blockTitle: { margin: "0 0 8px", fontSize: "13px", fontWeight: "800" },
 
     codeBlock: {
-        marginTop: "14px",
-        marginBottom: "14px",
-        border: "1px solid #334155",
-        borderRadius: "9px",
+        marginTop: "13px",
+        marginBottom: "13px",
+        border: "1px solid #263449",
+        borderRadius: "11px",
         overflow: "hidden",
-        backgroundColor: "#020617",
+        background: "#020617",
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,.02)",
     },
 
     codeHeader: {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "9px 12px",
-        backgroundColor: "#0f172a",
+        padding: "10px 13px",
+        background: "#0b1120",
         borderBottom: "1px solid #1e293b",
         color: "#cbd5e1",
-        fontSize: "12px",
-        fontWeight: "bold",
+        fontSize: "11px",
+        fontWeight: "800",
     },
 
-    codeLanguage: {
-        color: "#64748b",
-        fontSize: "10px",
-    },
+    codeLanguage: { color: "#64748b", fontSize: "9px", letterSpacing: ".7px" },
 
     codeContent: {
         margin: 0,
-        padding: "15px",
+        padding: "16px",
         overflowX: "auto",
         color: "#e2e8f0",
-        fontSize: "13px",
-        lineHeight: "1.6",
-        fontFamily:
-            "Consolas, Monaco, monospace",
+        fontSize: "12px",
+        lineHeight: "1.65",
+        fontFamily: "Consolas, Monaco, 'Courier New', monospace",
         whiteSpace: "pre-wrap",
     },
 
-    issueActions: {
-        display: "flex",
-        gap: "8px",
-        marginTop: "12px",
-    },
+    issueActions: { display: "flex", gap: "8px", marginTop: "12px" },
 
     githubButton: {
-        display: "inline-block",
+        display: "inline-flex",
+        alignItems: "center",
         padding: "8px 12px",
-        borderRadius: "7px",
+        borderRadius: "9px",
         border: "1px solid #334155",
-        backgroundColor: "#1e293b",
+        background: "#172033",
         color: "#93c5fd",
         textDecoration: "none",
-        fontSize: "12px",
-        fontWeight: "bold",
+        fontSize: "11px",
+        fontWeight: "800",
     },
 
-    issueNumber: {
-        position: "absolute",
-        right: "18px",
-        bottom: "12px",
-        color: "#334155",
-        fontSize: "10px",
-    },
+    issueNumber: { position: "absolute", right: "18px", bottom: "12px", color: "#334155", fontSize: "9px" },
 
-    list: {
-        margin: 0,
-        paddingLeft: "22px",
-    },
-
-    listItem: {
-        color: "#cbd5e1",
-        marginBottom: "10px",
-        lineHeight: "1.6",
-    },
+    list: { margin: 0, paddingLeft: "22px" },
+    listItem: { color: "#cbd5e1", marginBottom: "10px", lineHeight: "1.65" },
 
     comparisonCard: {
         padding: "24px",
-        border: "1px solid #334155",
-        borderRadius: "14px",
-        backgroundColor: "#0f172a",
+        border: "1px solid #263449",
+        borderRadius: "17px",
+        background: "linear-gradient(145deg, rgba(15,23,42,.96), rgba(7,12,25,.9))",
+        boxShadow: "0 16px 45px rgba(0,0,0,.18)",
     },
 
     compareGrid: {
         display: "grid",
-        gridTemplateColumns:
-            "1fr 50px 1fr",
+        gridTemplateColumns: "1fr 50px 1fr",
         alignItems: "center",
         gap: "15px",
         marginTop: "20px",
@@ -2498,17 +2439,13 @@ const styles = {
 
     compareColumn: {
         padding: "15px",
-        borderRadius: "9px",
-        backgroundColor: "#020617",
+        borderRadius: "11px",
+        background: "#020617",
         border: "1px solid #1e293b",
         overflow: "hidden",
     },
 
-    compareArrow: {
-        textAlign: "center",
-        color: "#64748b",
-        fontSize: "24px",
-    },
+    compareArrow: { textAlign: "center", color: "#64748b", fontSize: "24px" },
 
     compareRiskRow: {
         display: "flex",
@@ -2522,41 +2459,23 @@ const styles = {
     compareRisk: {
         padding: "9px 14px",
         border: "1px solid",
-        borderRadius: "8px",
-        fontWeight: "bold",
-        fontSize: "13px",
+        borderRadius: "999px",
+        fontWeight: "900",
+        fontSize: "12px",
     },
 
-    improvedText: {
-        color: "#86efac",
-        fontWeight: "bold",
-        fontSize: "13px",
-    },
-
-    worsenedText: {
-        color: "#fdba74",
-        fontWeight: "bold",
-        fontSize: "13px",
-    },
-
-    unchangedText: {
-        color: "#94a3b8",
-        fontWeight: "bold",
-        fontSize: "13px",
-    },
+    improvedText: { color: "#86efac", fontWeight: "900", fontSize: "12px" },
+    worsenedText: { color: "#fdba74", fontWeight: "900", fontSize: "12px" },
+    unchangedText: { color: "#94a3b8", fontWeight: "900", fontSize: "12px" },
 
     comparisonLists: {
         display: "grid",
-        gridTemplateColumns:
-            "repeat(2, minmax(0, 1fr))",
+        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
         gap: "18px",
         marginTop: "22px",
     },
 
-    comparisonTitle: {
-        fontSize: "15px",
-        margin: "0 0 10px 0",
-    },
+    comparisonTitle: { fontSize: "14px", margin: "0 0 10px" },
 
     comparisonIssue: {
         display: "flex",
@@ -2564,8 +2483,8 @@ const styles = {
         gap: "10px",
         padding: "11px",
         marginBottom: "8px",
-        borderRadius: "8px",
-        backgroundColor: "#020617",
+        borderRadius: "9px",
+        background: "#020617",
         border: "1px solid #1e293b",
     },
 
@@ -2573,9 +2492,9 @@ const styles = {
         flexShrink: 0,
         padding: "4px 7px",
         border: "1px solid",
-        borderRadius: "5px",
-        fontSize: "10px",
-        fontWeight: "bold",
+        borderRadius: "999px",
+        fontSize: "9px",
+        fontWeight: "900",
     },
 
     comparisonIssueBody: {
@@ -2586,40 +2505,34 @@ const styles = {
         flex: 1,
     },
 
-    comparisonMeta: {
-        color: "#64748b",
-        fontSize: "11px",
-    },
+    comparisonMeta: { color: "#64748b", fontSize: "10px" },
 
     smallGithubButton: {
         flexShrink: 0,
         color: "#93c5fd",
         textDecoration: "none",
-        fontSize: "11px",
-        fontWeight: "bold",
+        fontSize: "10px",
+        fontWeight: "800",
     },
 
     historyContainer: {
-        border: "1px solid #334155",
-        borderRadius: "12px",
+        border: "1px solid #263449",
+        borderRadius: "14px",
         overflow: "hidden",
+        boxShadow: "0 12px 35px rgba(0,0,0,.14)",
     },
 
     historyRow: {
         position: "relative",
         display: "grid",
-        gridTemplateColumns:
-            "45px minmax(200px, 1fr) 120px 90px auto",
+        gridTemplateColumns: "45px minmax(200px, 1fr) 120px 90px auto",
         gap: "12px",
         alignItems: "center",
-        padding: "16px 18px",
+        padding: "15px 18px",
         borderBottom: "1px solid #1e293b",
     },
 
-    historyIndex: {
-        color: "#64748b",
-        fontSize: "13px",
-    },
+    historyIndex: { color: "#64748b", fontSize: "12px" },
 
     historyCommit: {
         display: "flex",
@@ -2627,59 +2540,50 @@ const styles = {
         minWidth: 0,
     },
 
-    historyDate: {
-        marginTop: "4px",
-        color: "#475569",
-        fontSize: "10px",
-    },
+    historyDate: { marginTop: "4px", color: "#475569", fontSize: "10px" },
 
     historyRisk: {
         display: "inline-block",
         width: "fit-content",
         padding: "5px 8px",
         border: "1px solid",
-        borderRadius: "6px",
-        fontSize: "11px",
-        fontWeight: "bold",
+        borderRadius: "999px",
+        fontSize: "10px",
+        fontWeight: "900",
     },
 
-    historyIssues: {
-        color: "#94a3b8",
-        fontSize: "13px",
-    },
+    historyIssues: { color: "#94a3b8", fontSize: "12px" },
 
     currentBadge: {
         padding: "4px 7px",
-        borderRadius: "5px",
-        backgroundColor: "#172554",
+        borderRadius: "999px",
+        background: "rgba(59,130,246,.12)",
         color: "#93c5fd",
-        fontSize: "9px",
-        fontWeight: "bold",
+        border: "1px solid rgba(96,165,250,.18)",
+        fontSize: "8px",
+        fontWeight: "900",
     },
 
     smallButton: {
         padding: "6px 9px",
-        borderRadius: "6px",
+        borderRadius: "8px",
         border: "1px solid #334155",
-        backgroundColor: "#1e293b",
+        background: "#172033",
         color: "#cbd5e1",
         cursor: "pointer",
         fontSize: "10px",
+        fontWeight: "700",
     },
 
     historyDetails: {
         gridColumn: "2 / -1",
-        padding: "14px",
-        borderRadius: "8px",
-        backgroundColor: "#020617",
+        padding: "15px",
+        borderRadius: "10px",
+        background: "#020617",
         border: "1px solid #1e293b",
     },
 
-    historyDetailActions: {
-        display: "flex",
-        gap: "10px",
-        marginTop: "12px",
-    },
+    historyDetailActions: { display: "flex", gap: "10px", marginTop: "12px" },
 
     loadingBox: {
         minHeight: "80vh",
@@ -2693,14 +2597,16 @@ const styles = {
     spinner: {
         fontSize: "45px",
         marginBottom: "15px",
+        filter: "drop-shadow(0 0 18px rgba(59,130,246,.35))",
     },
 
     errorBox: {
         padding: "25px",
-        border: "1px solid #7f1d1d",
-        borderRadius: "12px",
-        backgroundColor: "#450a0a",
+        border: "1px solid rgba(239,68,68,.4)",
+        borderRadius: "14px",
+        background: "rgba(69,10,10,.72)",
         color: "#fca5a5",
+        boxShadow: "0 12px 35px rgba(0,0,0,.18)",
     },
 };
 

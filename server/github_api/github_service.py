@@ -7,6 +7,30 @@ from database.mongodb import db
 
 
 # ============================================================
+# CUSTOM GITHUB API ERROR
+# ============================================================
+
+class GitHubAPIError(Exception):
+    """
+    Safe exception for GitHub API failures.
+
+    The exception intentionally does not contain
+    GitHub's raw response body because that information
+    should not be exposed to the frontend.
+    """
+
+    def __init__(
+        self,
+        message,
+        status_code=None,
+    ):
+
+        super().__init__(message)
+
+        self.status_code = status_code
+
+
+# ============================================================
 # GET GITHUB ACCESS TOKEN
 # ============================================================
 
@@ -14,7 +38,21 @@ def get_github_token(github_id):
     """
     Find the authenticated GitHub user in MongoDB
     and decrypt their GitHub access token.
+
+    The decrypted token exists only on the backend.
     """
+
+    # --------------------------------------------------------
+    # 1. Find user
+    # --------------------------------------------------------
+
+    if not github_id:
+
+        raise GitHubAPIError(
+            "GitHub authentication information is missing.",
+            401,
+        )
+
 
     user = db["users"].find_one(
         {
@@ -22,30 +60,55 @@ def get_github_token(github_id):
         }
     )
 
+
     if not user:
-        raise ValueError(
-            "GitHub user not found in MongoDB."
+
+        raise GitHubAPIError(
+            "GitHub user not found.",
+            401,
         )
+
+
+    # --------------------------------------------------------
+    # 2. Get encrypted token
+    # --------------------------------------------------------
 
     encrypted_token = user.get(
         "encrypted_access_token"
     )
 
+
     if not encrypted_token:
-        raise ValueError(
-            "Encrypted GitHub access token not found."
+
+        raise GitHubAPIError(
+            "GitHub access token is not available.",
+            401,
         )
+
+
+    # --------------------------------------------------------
+    # 3. Get encryption key
+    # --------------------------------------------------------
 
     encryption_key = (
         settings.GITHUB_TOKEN_ENCRYPTION_KEY
     )
 
+
     if not encryption_key:
-        raise ValueError(
-            "GITHUB_TOKEN_ENCRYPTION_KEY is not configured."
+
+        raise GitHubAPIError(
+            "GitHub token encryption is not configured.",
+            500,
         )
 
+
+    # --------------------------------------------------------
+    # 4. Decrypt token
+    # --------------------------------------------------------
+
     try:
+
         cipher = Fernet(
             encryption_key.encode()
         )
@@ -55,9 +118,21 @@ def get_github_token(github_id):
         ).decode()
 
     except Exception as e:
-        raise ValueError(
-            "Could not decrypt GitHub access token."
+
+        # Never expose the original exception.
+        raise GitHubAPIError(
+            "Could not decrypt GitHub access token.",
+            500,
         ) from e
+
+
+    if not access_token:
+
+        raise GitHubAPIError(
+            "GitHub access token is empty.",
+            401,
+        )
+
 
     return access_token
 
@@ -69,13 +144,100 @@ def get_github_token(github_id):
 def get_github_headers(access_token):
     """
     Create common headers for GitHub API requests.
+
+    The access token is used only server-side.
     """
 
+    if not access_token:
+
+        raise GitHubAPIError(
+            "GitHub access token is missing.",
+            401,
+        )
+
+
     return {
-        "Authorization": f"Bearer {access_token}",
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
+
+        "Authorization":
+            f"Bearer {access_token}",
+
+        "Accept":
+            "application/vnd.github+json",
+
+        "X-GitHub-Api-Version":
+            "2022-11-28",
     }
+
+
+# ============================================================
+# HANDLE GITHUB RESPONSE ERROR
+# ============================================================
+
+def handle_github_error(
+    response,
+    resource_name="GitHub resource",
+):
+    """
+    Convert GitHub API errors into safe application errors.
+
+    The raw GitHub response body is deliberately not included.
+    """
+
+    status_code = response.status_code
+
+
+    if status_code == 401:
+
+        raise GitHubAPIError(
+            "GitHub authentication has expired or is invalid.",
+            401,
+        )
+
+
+    if status_code == 403:
+
+        raise GitHubAPIError(
+            "GitHub access was denied.",
+            403,
+        )
+
+
+    if status_code == 404:
+
+        raise GitHubAPIError(
+            f"{resource_name} was not found or is not accessible.",
+            404,
+        )
+
+
+    if status_code == 422:
+
+        raise GitHubAPIError(
+            f"Invalid GitHub request for {resource_name}.",
+            422,
+        )
+
+
+    if status_code == 429:
+
+        raise GitHubAPIError(
+            "GitHub API rate limit exceeded.",
+            429,
+        )
+
+
+    if 500 <= status_code <= 599:
+
+        raise GitHubAPIError(
+            "GitHub is temporarily unavailable.",
+            502,
+        )
+
+
+    raise GitHubAPIError(
+        f"GitHub request for {resource_name} failed.",
+        status_code,
+    )
 
 
 # ============================================================
@@ -88,10 +250,6 @@ def get_user_repositories(github_id):
     GitHub user.
     """
 
-    print("======================================")
-    print("GETTING GITHUB REPOSITORIES")
-    print("GitHub ID:", github_id)
-
     # --------------------------------------------------------
     # 1. Get GitHub token
     # --------------------------------------------------------
@@ -100,9 +258,6 @@ def get_user_repositories(github_id):
         github_id
     )
 
-    print(
-        "GitHub token decrypted successfully"
-    )
 
     # --------------------------------------------------------
     # 2. Create headers
@@ -112,122 +267,71 @@ def get_user_repositories(github_id):
         access_token
     )
 
-    # ========================================================
-    # 3. CHECK AUTHENTICATED GITHUB ACCOUNT
-    # ========================================================
 
-    user_response = requests.get(
-        "https://api.github.com/user",
-        headers=headers,
-        timeout=15,
-    )
-
-    print(
-        "GitHub /user status:",
-        user_response.status_code
-    )
-
-    if user_response.status_code != 200:
-        raise ValueError(
-            f"GitHub user API error: "
-            f"{user_response.status_code} "
-            f"{user_response.text}"
-        )
-
-    github_account = user_response.json()
-
-    print(
-        "GitHub authenticated account:",
-        github_account.get("login")
-    )
-
-    print(
-        "GitHub account ID:",
-        github_account.get("id")
-    )
-
-    print(
-        "Public repositories:",
-        github_account.get("public_repos")
-    )
-
-    print(
-        "Private repositories:",
-        github_account.get("total_private_repos")
-    )
-
-    print(
-        "Granted OAuth scopes:",
-        user_response.headers.get(
-            "X-OAuth-Scopes"
-        )
-    )
-
-    # ========================================================
-    # 4. GET REPOSITORIES
-    # ========================================================
+    # --------------------------------------------------------
+    # 3. Get repositories
+    # --------------------------------------------------------
 
     repositories = []
 
     page = 1
 
+
     while True:
 
         response = requests.get(
+
             "https://api.github.com/user/repos",
+
             headers=headers,
+
             params={
                 "visibility": "all",
+
                 "affiliation": (
                     "owner,collaborator,"
                     "organization_member"
                 ),
+
                 "sort": "updated",
+
                 "per_page": 100,
+
                 "page": page,
             },
+
             timeout=15,
         )
 
-        print(
-            "GitHub /user/repos status:",
-            response.status_code
-        )
 
         if response.status_code != 200:
-            raise ValueError(
-                f"GitHub repository API error: "
-                f"{response.status_code} "
-                f"{response.text}"
+
+            handle_github_error(
+                response,
+                "repository list",
             )
+
 
         data = response.json()
 
+
         if not data:
+
             break
 
-        repositories.extend(data)
+
+        repositories.extend(
+            data
+        )
+
 
         if len(data) < 100:
+
             break
+
 
         page += 1
 
-    print(
-        "Repositories returned:",
-        len(repositories)
-    )
-
-    for repo in repositories:
-
-        print(
-            "Repository:",
-            repo.get("full_name")
-        )
-
-    print(
-        "======================================"
-    )
 
     return repositories
 
@@ -243,20 +347,22 @@ def get_pull_requests(
 ):
     """
     Fetch open pull requests for a GitHub repository.
+
+    The request is made using the authenticated user's
+    GitHub token, so GitHub enforces repository access.
     """
 
-    print("======================================")
-    print("GETTING GITHUB PULL REQUESTS")
+    # --------------------------------------------------------
+    # Validate parameters
+    # --------------------------------------------------------
 
-    print(
-        "GitHub ID:",
-        github_id
-    )
+    if not owner or not repo_name:
 
-    print(
-        "Repository:",
-        f"{owner}/{repo_name}"
-    )
+        raise GitHubAPIError(
+            "Repository information is required.",
+            400,
+        )
+
 
     # --------------------------------------------------------
     # 1. Get GitHub token
@@ -266,9 +372,6 @@ def get_pull_requests(
         github_id
     )
 
-    print(
-        "GitHub token decrypted successfully"
-    )
 
     # --------------------------------------------------------
     # 2. GitHub API headers
@@ -278,22 +381,27 @@ def get_pull_requests(
         access_token
     )
 
+
     # --------------------------------------------------------
     # 3. GitHub Pull Request URL
     # --------------------------------------------------------
 
     url = (
-        f"https://api.github.com/repos/"
+        "https://api.github.com/repos/"
         f"{owner}/{repo_name}/pulls"
     )
+
 
     # --------------------------------------------------------
     # 4. Request open pull requests
     # --------------------------------------------------------
 
     response = requests.get(
+
         url,
+
         headers=headers,
+
         params={
             "state": "open",
             "sort": "updated",
@@ -301,81 +409,29 @@ def get_pull_requests(
             "per_page": 100,
             "page": 1,
         },
+
         timeout=15,
     )
 
-    print(
-        "GitHub /pulls status:",
-        response.status_code
-    )
 
     # --------------------------------------------------------
-    # 5. Handle API errors
+    # 5. Handle errors
     # --------------------------------------------------------
 
     if response.status_code != 200:
-        raise ValueError(
-            f"GitHub pull request API error: "
-            f"{response.status_code} "
-            f"{response.text}"
+
+        handle_github_error(
+            response,
+            "pull request list",
         )
 
+
     # --------------------------------------------------------
-    # 6. Parse pull requests
+    # 6. Parse response
     # --------------------------------------------------------
 
     pull_requests = response.json()
 
-    print(
-        "Pull requests returned:",
-        len(pull_requests)
-    )
-
-    # --------------------------------------------------------
-    # 7. Print PR information
-    # --------------------------------------------------------
-
-    for pr in pull_requests:
-
-        print(
-            "PR:",
-            f"#{pr.get('number')}",
-            "-",
-            pr.get("title")
-        )
-
-        print(
-            "State:",
-            pr.get("state")
-        )
-
-        print(
-            "Author:",
-            pr.get(
-                "user",
-                {}
-            ).get("login")
-        )
-
-        print(
-            "Head branch:",
-            pr.get(
-                "head",
-                {}
-            ).get("ref")
-        )
-
-        print(
-            "Base branch:",
-            pr.get(
-                "base",
-                {}
-            ).get("ref")
-        )
-
-    print(
-        "======================================"
-    )
 
     return pull_requests
 
@@ -393,104 +449,90 @@ def get_pull_request(
     """
     Fetch one GitHub Pull Request.
 
-    This is used by the AI reviewer to obtain the current
-    HEAD commit SHA before checking the MongoDB review cache.
+    Used by the AI reviewer to obtain the current
+    HEAD commit SHA before checking the review cache.
     """
-    print("======================================")
-    print("GETTING SINGLE PULL REQUEST")
 
-    print(
-        "GitHub ID:",
-        github_id,
-    )
+    # --------------------------------------------------------
+    # Validate parameters
+    # --------------------------------------------------------
 
-    print(
-        "Repository:",
-        f"{owner}/{repo_name}",
-    )
+    if not owner or not repo_name:
 
-    print(
-        "PR number:",
-        pr_number,
-    )
+        raise GitHubAPIError(
+            "Repository information is required.",
+            400,
+        )
+
+
+    if not pr_number:
+
+        raise GitHubAPIError(
+            "Pull Request number is required.",
+            400,
+        )
+
+
+    # --------------------------------------------------------
+    # Get token
+    # --------------------------------------------------------
 
     access_token = get_github_token(
         github_id
     )
 
-    print(
-        "GitHub token decrypted successfully"
-    )
+
+    # --------------------------------------------------------
+    # Headers
+    # --------------------------------------------------------
 
     headers = get_github_headers(
         access_token
     )
 
+
+    # --------------------------------------------------------
+    # URL
+    # --------------------------------------------------------
+
     url = (
-        f"https://api.github.com/repos/"
+        "https://api.github.com/repos/"
         f"{owner}/{repo_name}/pulls/"
         f"{pr_number}"
     )
 
+
+    # --------------------------------------------------------
+    # Request
+    # --------------------------------------------------------
+
     response = requests.get(
+
         url,
+
         headers=headers,
+
         timeout=15,
     )
 
-    print(
-        "GitHub single PR status:",
-        response.status_code,
-    )
+
+    # --------------------------------------------------------
+    # Handle errors
+    # --------------------------------------------------------
 
     if response.status_code != 200:
-        raise ValueError(
-            f"GitHub single PR API error: "
-            f"{response.status_code} "
-            f"{response.text}"
+
+        handle_github_error(
+            response,
+            "pull request",
         )
 
-    pull_request = response.json()
 
-    print(
-        "PR:",
-        f"#{pull_request.get('number')}",
-    )
+    # --------------------------------------------------------
+    # Return PR
+    # --------------------------------------------------------
 
-    print(
-        "Title:",
-        pull_request.get("title"),
-    )
-
-    print(
-        "Head branch:",
-        pull_request.get(
-            "head",
-            {},
-        ).get("ref"),
-    )
-
-    print(
-        "HEAD SHA:",
-        pull_request.get(
-            "head",
-            {},
-        ).get("sha"),
-    )
-
-    print(
-        "Base branch:",
-        pull_request.get(
-            "base",
-            {},
-        ).get("ref"),
-    )
-
-    print(
-        "======================================"
-    )
-
-    return pull_request
+    return response.json()
 
 
 # ============================================================
@@ -506,27 +548,29 @@ def get_pull_request_files(
     """
     Fetch files changed in a GitHub Pull Request.
 
-    The important field for our AI reviewer is `patch`.
-    It contains the actual code changes.
+    The `patch` field contains the actual code changes
+    used by the AI reviewer.
     """
 
-    print("======================================")
-    print("GETTING PULL REQUEST FILES")
+    # --------------------------------------------------------
+    # Validate parameters
+    # --------------------------------------------------------
 
-    print(
-        "GitHub ID:",
-        github_id
-    )
+    if not owner or not repo_name:
 
-    print(
-        "Repository:",
-        f"{owner}/{repo_name}"
-    )
+        raise GitHubAPIError(
+            "Repository information is required.",
+            400,
+        )
 
-    print(
-        "PR number:",
-        pr_number
-    )
+
+    if not pr_number:
+
+        raise GitHubAPIError(
+            "Pull Request number is required.",
+            400,
+        )
+
 
     # --------------------------------------------------------
     # 1. Get GitHub token
@@ -536,9 +580,6 @@ def get_pull_request_files(
         github_id
     )
 
-    print(
-        "GitHub token decrypted successfully"
-    )
 
     # --------------------------------------------------------
     # 2. GitHub API headers
@@ -548,46 +589,48 @@ def get_pull_request_files(
         access_token
     )
 
+
     # --------------------------------------------------------
     # 3. GitHub PR files URL
     # --------------------------------------------------------
 
     url = (
-        f"https://api.github.com/repos/"
+        "https://api.github.com/repos/"
         f"{owner}/{repo_name}/pulls/"
         f"{pr_number}/files"
     )
+
 
     # --------------------------------------------------------
     # 4. Fetch changed files
     # --------------------------------------------------------
 
     response = requests.get(
+
         url,
+
         headers=headers,
+
         params={
             "per_page": 100,
             "page": 1,
         },
+
         timeout=15,
     )
 
-    print(
-        "GitHub /pulls/files status:",
-        response.status_code
-    )
 
     # --------------------------------------------------------
-    # 5. Handle API errors
+    # 5. Handle errors
     # --------------------------------------------------------
 
     if response.status_code != 200:
 
-        raise ValueError(
-            f"GitHub PR files API error: "
-            f"{response.status_code} "
-            f"{response.text}"
+        handle_github_error(
+            response,
+            "pull request files",
         )
+
 
     # --------------------------------------------------------
     # 6. Parse files
@@ -595,47 +638,9 @@ def get_pull_request_files(
 
     files = response.json()
 
-    print(
-        "Files changed:",
-        len(files)
-    )
-
-    # --------------------------------------------------------
-    # 7. Print file information
-    # --------------------------------------------------------
-
-    for file in files:
-
-        print(
-            "File:",
-            file.get("filename")
-        )
-
-        print(
-            "Status:",
-            file.get("status")
-        )
-
-        print(
-            "Additions:",
-            file.get("additions")
-        )
-
-        print(
-            "Deletions:",
-            file.get("deletions")
-        )
-
-        print(
-            "Changes:",
-            file.get("changes")
-        )
-
-    print(
-        "======================================"
-    )
 
     return files
+
 
 # ============================================================
 # POST PULL REQUEST COMMENT
@@ -654,50 +659,109 @@ def post_pull_request_comment(
     The OAuth token is retrieved and decrypted on the backend.
     It is never sent to the React frontend.
     """
+
+    # --------------------------------------------------------
+    # Validate comment
+    # --------------------------------------------------------
+
     if not body or not str(body).strip():
-        raise ValueError(
-            "Comment body cannot be empty."
+
+        raise GitHubAPIError(
+            "Comment body cannot be empty.",
+            400,
         )
+
+
+    if not owner or not repo_name:
+
+        raise GitHubAPIError(
+            "Repository information is required.",
+            400,
+        )
+
+
+    if not pr_number:
+
+        raise GitHubAPIError(
+            "Pull Request number is required.",
+            400,
+        )
+
+
+    # --------------------------------------------------------
+    # Get GitHub token
+    # --------------------------------------------------------
 
     access_token = get_github_token(
         github_id
     )
 
+
+    # --------------------------------------------------------
+    # Headers
+    # --------------------------------------------------------
+
     headers = get_github_headers(
         access_token
     )
 
+
+    # --------------------------------------------------------
+    # GitHub comment URL
+    # --------------------------------------------------------
+
     url = (
-        f"https://api.github.com/repos/"
+        "https://api.github.com/repos/"
         f"{owner}/{repo_name}/issues/"
         f"{pr_number}/comments"
     )
 
+
+    # --------------------------------------------------------
+    # Post comment
+    # --------------------------------------------------------
+
     response = requests.post(
+
         url,
+
         headers=headers,
+
         json={
             "body": str(body),
         },
+
         timeout=20,
     )
 
-    print(
-        "GitHub PR comment status:",
-        response.status_code,
-    )
+
+    # --------------------------------------------------------
+    # Handle errors
+    # --------------------------------------------------------
 
     if response.status_code != 201:
-        raise ValueError(
-            f"GitHub PR comment API error: "
-            f"{response.status_code} "
-            f"{response.text}"
+
+        handle_github_error(
+            response,
+            "pull request comment",
         )
+
+
+    # --------------------------------------------------------
+    # Return safe response
+    # --------------------------------------------------------
 
     comment = response.json()
 
+
     return {
-        "id": comment.get("id"),
-        "url": comment.get("html_url"),
-        "created_at": comment.get("created_at"),
+
+        "id":
+            comment.get("id"),
+
+        "url":
+            comment.get("html_url"),
+
+        "created_at":
+            comment.get("created_at"),
     }

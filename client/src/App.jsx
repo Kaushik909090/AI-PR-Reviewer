@@ -7,6 +7,7 @@ import {
   Navigate,
 } from "react-router-dom";
 
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Repository from "./pages/Repository";
@@ -21,9 +22,16 @@ function App() {
 
       <Routes>
 
-        {/* Login */}
+        {/* Landing Page */}
         <Route
           path="/"
+          element={<Home />}
+        />
+
+
+        {/* Login */}
+        <Route
+          path="/login"
           element={<Login />}
         />
 

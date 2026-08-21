@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 
 from .github_service import (
+    GitHubAPIError,
     get_user_repositories,
     get_pull_requests,
     get_pull_request_files,
@@ -20,13 +21,17 @@ def repositories(request):
         "github_id"
     )
 
+
     if not github_id:
+
         return JsonResponse(
             {
-                "error": "User is not authenticated."
+                "error":
+                    "User is not authenticated."
             },
             status=401,
         )
+
 
     try:
 
@@ -36,73 +41,85 @@ def repositories(request):
             )
         )
 
-    except Exception as e:
+
+    except GitHubAPIError as e:
 
         return JsonResponse(
             {
-                "error": "Failed to fetch GitHub repositories.",
-                "details": str(e),
+                "error":
+                    str(e)
+            },
+            status=e.status_code or 500,
+        )
+
+
+    except Exception:
+
+        return JsonResponse(
+            {
+                "error":
+                    "Failed to fetch GitHub repositories."
             },
             status=500,
         )
 
+
     repositories_data = []
+
 
     for repo in github_repositories:
 
         repositories_data.append(
+
             {
-                "id": repo.get("id"),
+                "id":
+                    repo.get("id"),
 
-                "name": repo.get(
-                    "name"
-                ),
+                "name":
+                    repo.get("name"),
 
-                "full_name": repo.get(
-                    "full_name"
-                ),
+                "full_name":
+                    repo.get("full_name"),
 
-                "description": repo.get(
-                    "description"
-                ),
+                "description":
+                    repo.get("description"),
 
-                "private": repo.get(
-                    "private"
-                ),
+                "private":
+                    repo.get("private"),
 
-                "html_url": repo.get(
-                    "html_url"
-                ),
+                "html_url":
+                    repo.get("html_url"),
 
-                "default_branch": repo.get(
-                    "default_branch"
-                ),
+                "default_branch":
+                    repo.get("default_branch"),
 
-                "language": repo.get(
-                    "language"
-                ),
+                "language":
+                    repo.get("language"),
 
-                "updated_at": repo.get(
-                    "updated_at"
-                ),
+                "updated_at":
+                    repo.get("updated_at"),
 
                 "owner": {
-                    "login": repo.get(
-                        "owner",
-                        {}
-                    ).get(
-                        "login"
-                    ),
+
+                    "login":
+                        repo.get(
+                            "owner",
+                            {}
+                        ).get(
+                            "login"
+                        ),
                 },
             }
         )
 
+
     return JsonResponse(
         {
-            "repositories": repositories_data,
-            "count": len(
-                repositories_data
-            ),
+            "repositories":
+                repositories_data,
+
+            "count":
+                len(repositories_data),
         }
     )
 
@@ -124,13 +141,17 @@ def pull_requests(
         "github_id"
     )
 
+
     if not github_id:
+
         return JsonResponse(
             {
-                "error": "User is not authenticated."
+                "error":
+                    "User is not authenticated."
             },
             status=401,
         )
+
 
     try:
 
@@ -142,106 +163,120 @@ def pull_requests(
             )
         )
 
-    except Exception as e:
+
+    except GitHubAPIError as e:
 
         return JsonResponse(
             {
-                "error": (
-                    "Failed to fetch "
-                    "GitHub pull requests."
-                ),
-                "details": str(e),
+                "error":
+                    str(e)
+            },
+            status=e.status_code or 500,
+        )
+
+
+    except Exception:
+
+        return JsonResponse(
+            {
+                "error":
+                    "Failed to fetch GitHub pull requests."
             },
             status=500,
         )
 
+
     pull_requests_data = []
+
 
     for pr in github_pull_requests:
 
         pull_requests_data.append(
+
             {
-                "id": pr.get(
-                    "id"
-                ),
+                "id":
+                    pr.get("id"),
 
-                "number": pr.get(
-                    "number"
-                ),
+                "number":
+                    pr.get("number"),
 
-                "title": pr.get(
-                    "title"
-                ),
+                "title":
+                    pr.get("title"),
 
-                "body": pr.get(
-                    "body"
-                ),
+                "body":
+                    pr.get("body"),
 
-                "state": pr.get(
-                    "state"
-                ),
+                "state":
+                    pr.get("state"),
 
-                "html_url": pr.get(
-                    "html_url"
-                ),
+                "html_url":
+                    pr.get("html_url"),
 
-                "created_at": pr.get(
-                    "created_at"
-                ),
+                "created_at":
+                    pr.get("created_at"),
 
-                "updated_at": pr.get(
-                    "updated_at"
-                ),
+                "updated_at":
+                    pr.get("updated_at"),
 
                 "user": {
-                    "login": pr.get(
-                        "user",
-                        {}
-                    ).get(
-                        "login"
-                    ),
 
-                    "avatar_url": pr.get(
-                        "user",
-                        {}
-                    ).get(
-                        "avatar_url"
-                    ),
+                    "login":
+                        pr.get(
+                            "user",
+                            {}
+                        ).get(
+                            "login"
+                        ),
+
+                    "avatar_url":
+                        pr.get(
+                            "user",
+                            {}
+                        ).get(
+                            "avatar_url"
+                        ),
                 },
 
                 "head": {
-                    "ref": pr.get(
-                        "head",
-                        {}
-                    ).get(
-                        "ref"
-                    ),
 
-                    "sha": pr.get(
-                        "head",
-                        {}
-                    ).get(
-                        "sha"
-                    ),
+                    "ref":
+                        pr.get(
+                            "head",
+                            {}
+                        ).get(
+                            "ref"
+                        ),
+
+                    "sha":
+                        pr.get(
+                            "head",
+                            {}
+                        ).get(
+                            "sha"
+                        ),
                 },
 
                 "base": {
-                    "ref": pr.get(
-                        "base",
-                        {}
-                    ).get(
-                        "ref"
-                    ),
+
+                    "ref":
+                        pr.get(
+                            "base",
+                            {}
+                        ).get(
+                            "ref"
+                        ),
                 },
             }
         )
 
+
     return JsonResponse(
         {
-            "pull_requests": pull_requests_data,
-            "count": len(
-                pull_requests_data
-            ),
+            "pull_requests":
+                pull_requests_data,
+
+            "count":
+                len(pull_requests_data),
         }
     )
 
@@ -260,7 +295,7 @@ def pull_request_files(
     Return files changed in a GitHub Pull Request.
 
     The `patch` field contains the actual code changes
-    that we will later send to the AI reviewer.
+    that we later send to the AI reviewer.
     """
 
     # --------------------------------------------------------
@@ -271,14 +306,17 @@ def pull_request_files(
         "github_id"
     )
 
+
     if not github_id:
 
         return JsonResponse(
             {
-                "error": "User is not authenticated."
+                "error":
+                    "User is not authenticated."
             },
             status=401,
         )
+
 
     # --------------------------------------------------------
     # 2. Fetch PR files from GitHub
@@ -295,18 +333,28 @@ def pull_request_files(
             )
         )
 
-    except Exception as e:
+
+    except GitHubAPIError as e:
 
         return JsonResponse(
             {
-                "error": (
-                    "Failed to fetch "
-                    "pull request files."
-                ),
-                "details": str(e),
+                "error":
+                    str(e)
+            },
+            status=e.status_code or 500,
+        )
+
+
+    except Exception:
+
+        return JsonResponse(
+            {
+                "error":
+                    "Failed to fetch pull request files."
             },
             status=500,
         )
+
 
     # --------------------------------------------------------
     # 3. Prepare file data for frontend
@@ -314,45 +362,38 @@ def pull_request_files(
 
     files_data = []
 
+
     for file in github_files:
 
         files_data.append(
+
             {
-                "filename": file.get(
-                    "filename"
-                ),
+                "filename":
+                    file.get("filename"),
 
-                "status": file.get(
-                    "status"
-                ),
+                "status":
+                    file.get("status"),
 
-                "additions": file.get(
-                    "additions"
-                ),
+                "additions":
+                    file.get("additions"),
 
-                "deletions": file.get(
-                    "deletions"
-                ),
+                "deletions":
+                    file.get("deletions"),
 
-                "changes": file.get(
-                    "changes"
-                ),
+                "changes":
+                    file.get("changes"),
 
-                # IMPORTANT:
-                # This contains the code diff.
-                "patch": file.get(
-                    "patch"
-                ),
+                "patch":
+                    file.get("patch"),
 
-                "blob_url": file.get(
-                    "blob_url"
-                ),
+                "blob_url":
+                    file.get("blob_url"),
 
-                "raw_url": file.get(
-                    "raw_url"
-                ),
+                "raw_url":
+                    file.get("raw_url"),
             }
         )
+
 
     # --------------------------------------------------------
     # 4. Return response
@@ -360,9 +401,10 @@ def pull_request_files(
 
     return JsonResponse(
         {
-            "files": files_data,
-            "count": len(
-                files_data
-            ),
+            "files":
+                files_data,
+
+            "count":
+                len(files_data),
         }
     )

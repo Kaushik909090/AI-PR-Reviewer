@@ -35,14 +35,26 @@ if not SECRET_KEY:
         "SECRET_KEY is not set in the .env file"
     )
 
+
 DEBUG = os.getenv(
     "DEBUG",
     "True"
-) == "True"
+).lower() == "true"
+
+
+# ------------------------------------------------------------
+# ALLOWED HOSTS
+# ------------------------------------------------------------
+
+ALLOWED_HOSTS_ENV = os.getenv(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1"
+)
 
 ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
+    host.strip()
+    for host in ALLOWED_HOSTS_ENV.split(",")
+    if host.strip()
 ]
 
 
@@ -166,8 +178,15 @@ REST_FRAMEWORK = {
 # CORS
 # ============================================================
 
+CORS_ALLOWED_ORIGINS_ENV = os.getenv(
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:5173"
+)
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
+    origin.strip()
+    for origin in CORS_ALLOWED_ORIGINS_ENV.split(",")
+    if origin.strip()
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -180,30 +199,81 @@ CORS_ALLOW_CREDENTIALS = True
 # JavaScript cannot access the Django session cookie.
 SESSION_COOKIE_HTTPONLY = True
 
-# Required for local OAuth.
+# Lax works with the current local GitHub OAuth flow.
 SESSION_COOKIE_SAMESITE = "Lax"
 
-# Local development uses HTTP.
-SESSION_COOKIE_SECURE = False
+# HTTPS production will enable this automatically.
+SESSION_COOKIE_SECURE = not DEBUG
+
+# Prevent browsers from exposing the session cookie
+# through non-secure contexts in production.
+SESSION_COOKIE_NAME = "ai_pr_reviewer_session"
+
+# Session expiration.
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
+
+# Save session when modified.
+SESSION_SAVE_EVERY_REQUEST = False
 
 
 # ============================================================
 # CSRF SETTINGS
 # ============================================================
 
+CSRF_TRUSTED_ORIGINS_ENV = os.getenv(
+    "CSRF_TRUSTED_ORIGINS",
+    "http://localhost:5173"
+)
+
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
+    origin.strip()
+    for origin in CSRF_TRUSTED_ORIGINS_ENV.split(",")
+    if origin.strip()
 ]
 
-# React needs to read the CSRF cookie
-# and send it as X-CSRFToken.
+
+# React needs to be able to read the CSRF cookie
+# if the frontend sends the CSRF token manually.
 CSRF_COOKIE_HTTPONLY = False
 
-# Local development uses HTTP.
-CSRF_COOKIE_SECURE = False
+# HTTPS production will enable this automatically.
+CSRF_COOKIE_SECURE = not DEBUG
 
-# Same-site policy for localhost development.
 CSRF_COOKIE_SAMESITE = "Lax"
+
+
+# ============================================================
+# SECURITY HEADERS
+# ============================================================
+
+# Prevent the browser from MIME-sniffing responses.
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Prevent clickjacking.
+X_FRAME_OPTIONS = "DENY"
+
+
+# ============================================================
+# PRODUCTION HTTPS SECURITY
+# ============================================================
+
+if not DEBUG:
+
+    # Redirect HTTP requests to HTTPS.
+    SECURE_SSL_REDIRECT = True
+
+    # Tell browsers to only use HTTPS for one year.
+    SECURE_HSTS_SECONDS = 31536000
+
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+    SECURE_HSTS_PRELOAD = True
+
+    # Trust the HTTPS protocol when behind a reverse proxy.
+    SECURE_PROXY_SSL_HEADER = (
+        "HTTP_X_FORWARDED_PROTO",
+        "https",
+    )
 
 
 # ============================================================
@@ -214,9 +284,21 @@ GITHUB_CLIENT_ID = os.getenv(
     "GITHUB_CLIENT_ID"
 )
 
+if not GITHUB_CLIENT_ID:
+    raise ValueError(
+        "GITHUB_CLIENT_ID is not set in the .env file"
+    )
+
+
 GITHUB_CLIENT_SECRET = os.getenv(
     "GITHUB_CLIENT_SECRET"
 )
+
+if not GITHUB_CLIENT_SECRET:
+    raise ValueError(
+        "GITHUB_CLIENT_SECRET is not set in the .env file"
+    )
+
 
 GITHUB_REDIRECT_URI = os.getenv(
     "GITHUB_REDIRECT_URI",
