@@ -302,7 +302,7 @@ if not GITHUB_CLIENT_SECRET:
 
 GITHUB_REDIRECT_URI = os.getenv(
     "GITHUB_REDIRECT_URI",
-    "http://localhost:8000/auth/github/callback/",
+    "https://ai-pr-reviewer-bq04.onrender.com/auth/github/callback/",
 )
 
 
