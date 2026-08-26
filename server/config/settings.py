@@ -199,22 +199,20 @@ CORS_ALLOW_CREDENTIALS = True
 # JavaScript cannot access the Django session cookie.
 SESSION_COOKIE_HTTPONLY = True
 
-# Lax works with the current local GitHub OAuth flow.
-SESSION_COOKIE_SAMESITE = "Lax"
+# IMPORTANT:
+# Frontend (Vercel) and backend (Render) are different sites.
+# None allows the browser to send the session cookie
+# with cross-site requests.
+SESSION_COOKIE_SAMESITE = "None"
 
-# HTTPS production will enable this automatically.
-SESSION_COOKIE_SECURE = not DEBUG
+# Render uses HTTPS.
+SESSION_COOKIE_SECURE = True
 
-# Prevent browsers from exposing the session cookie
-# through non-secure contexts in production.
 SESSION_COOKIE_NAME = "ai_pr_reviewer_session"
 
-# Session expiration.
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 
-# Save session when modified.
 SESSION_SAVE_EVERY_REQUEST = False
-
 
 # ============================================================
 # CSRF SETTINGS
@@ -237,9 +235,9 @@ CSRF_TRUSTED_ORIGINS = [
 CSRF_COOKIE_HTTPONLY = False
 
 # HTTPS production will enable this automatically.
-CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE =  True
 
-CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "None"
 
 
 # ============================================================
